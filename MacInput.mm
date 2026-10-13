@@ -106,3 +106,8 @@ bool globalKeyDown(){
 bool globalMouseDown(){
     return mouseDown;
 }
+
+const char* resourcePath() {
+    NSString *path = [[NSBundle mainBundle] resourcePath];
+    return [path UTF8String];
+}

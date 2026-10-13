@@ -1,6 +1,7 @@
 #include <iostream>
 #include <raylib.h>
 #include "MacInput.h"
+#include <string>
 
 using namespace std;
 
@@ -92,11 +93,12 @@ void draw(){
 void run(){
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
     InitWindow(165, 165, "hi");
-    mouse = LoadTexture("assets/1.png");
-    back = LoadTexture("assets/4.png");
-    idle = LoadTexture("assets/basic.png");
-    key1 = LoadTexture("assets/left.png");
-    key2 = LoadTexture("assets/right.png");
+    std::string assets = std::string(resourcePath()) + "/assets/";
+    mouse = LoadTexture((assets + "1.png").c_str());
+    back = LoadTexture((assets + "4.png").c_str());
+    idle = LoadTexture((assets + "basic.png").c_str());
+    key1 = LoadTexture((assets + "left.png").c_str());
+    key2 = LoadTexture((assets + "right.png").c_str());
 
     startGlobalInput();
     while(!WindowShouldClose()){
