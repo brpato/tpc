@@ -1,6 +1,6 @@
 #include <iostream>
 #include <raylib.h>
-#include "MacInput.h"
+#include "GlobalInput.h"
 #include <string>
 
 using namespace std;
@@ -38,9 +38,12 @@ void input(){
     }
     if(globalKeyDown()){
         lastInputTime = GetTime();
+        click = false;
     }
     if(globalMouseDown()){
         lastInputTime = GetTime();
+        click = true;
+        backspace = false;
     }
 
     if(GetTime() - lastInputTime < 0.1){
@@ -91,8 +94,10 @@ void draw(){
 }
 
 void run(){
+    requestInputPermissions();
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
     InitWindow(165, 165, "hi");
+    SetTargetFPS(60);
     std::string assets = std::string(resourcePath()) + "/assets/";
     mouse = LoadTexture((assets + "1.png").c_str());
     back = LoadTexture((assets + "4.png").c_str());

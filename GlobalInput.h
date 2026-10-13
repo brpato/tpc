@@ -1,4 +1,4 @@
-// MacInput.h
+// GlobalInput.h
 #pragma once
 
 void startGlobalInput();
@@ -10,3 +10,4 @@ double globalMouseY();
 bool globalKeyDown();
 bool globalMouseDown();
 const char* resourcePath();
+void requestInputPermissions();

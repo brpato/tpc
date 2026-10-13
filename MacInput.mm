@@ -1,5 +1,6 @@
-#include "MacInput.h"
 #import <AppKit/AppKit.h>
+#import <ApplicationServices/ApplicationServices.h>
+#include "MacInput.h"
 #include <unordered_set>
 
 static bool keyPressed = false;
@@ -110,4 +111,16 @@ bool globalMouseDown(){
 const char* resourcePath() {
     NSString *path = [[NSBundle mainBundle] resourcePath];
     return [path UTF8String];
+}
+
+void requestInputPermissions() {
+    NSDictionary *options = @{
+        (__bridge NSString *)kAXTrustedCheckOptionPrompt: @YES
+    };
+
+    AXIsProcessTrustedWithOptions(
+        (__bridge CFDictionaryRef)options
+    );
+
+    CGRequestListenEventAccess();
 }
