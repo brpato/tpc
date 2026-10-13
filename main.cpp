@@ -12,8 +12,11 @@ bool dragging = false;
 Vector2 dragOffset;
 Texture2D idle;
 Texture2D back;
-
-
+Texture2D mouse;
+Texture2D key1;
+Texture2D key2;
+Texture2D currentFrame;
+bool typingFrame = false;
 
 void input(){
     if(globalBackspacePressed()){
@@ -25,6 +28,7 @@ void input(){
         lastInputTime = GetTime();
         backspace = false;
         click = false;
+        typingFrame = !typingFrame;
     }
     else if(globalMousePressed()){
         lastInputTime = GetTime();
@@ -40,17 +44,22 @@ void input(){
 
     if(GetTime() - lastInputTime < 0.1){
         if(backspace){
-            backgroundColor = BLUE;
+            currentFrame = back;
         }
         else if(click){
-            backgroundColor = GREEN;
+            currentFrame = mouse;
         }
         else{
-            backgroundColor = RED;
+            if(typingFrame){
+                currentFrame = key1;
+            }
+            else{
+                currentFrame = key2;
+            }
         }
     }
     else{
-        backgroundColor = WHITE;
+        currentFrame = idle;
     }
 }
 
@@ -72,20 +81,34 @@ void move(){
 }
 
 void draw(){
+    float x = (GetScreenWidth() - 165) / 2.0f;
+    float y = (GetScreenHeight() - 150) / 2.0f;
     BeginDrawing();
-    ClearBackground(backgroundColor);
+    ClearBackground(BLANK);
+    DrawTexturePro(currentFrame, {0, 0, (float)currentFrame.width, (float)currentFrame.height},{x, y, 165, 150}, {0, 0}, 0, WHITE);
     EndDrawing();
 }
 
 void run(){
-    SetConfigFlags(FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
-    InitWindow(200, 200, "hi");
+    SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
+    InitWindow(165, 165, "hi");
+    mouse = LoadTexture("assets/1.png");
+    back = LoadTexture("assets/4.png");
+    idle = LoadTexture("assets/basic.png");
+    key1 = LoadTexture("assets/left.png");
+    key2 = LoadTexture("assets/right.png");
+
     startGlobalInput();
     while(!WindowShouldClose()){
         input();
         move();
         draw();
     }
+    UnloadTexture(mouse);
+    UnloadTexture(back);
+    UnloadTexture(idle);
+    UnloadTexture(key1);
+    UnloadTexture(key2);
     CloseWindow();
 }
 

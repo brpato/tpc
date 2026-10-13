@@ -14,12 +14,12 @@ void startGlobalInput(){
          NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp) handler:^(NSEvent *event){
         if([event type] == NSEventTypeKeyDown){
             unsigned short key = [event keyCode];
-            heldKeys.insert(key);
+            auto result = heldKeys.insert(key);
 
             if(key == 51){
                 backspacePressed = true;
             }
-            else{
+            else if(result.second){
                 keyPressed = true;
             }
         }
@@ -43,12 +43,12 @@ void startGlobalInput(){
     handler:^NSEvent *(NSEvent *event){
         if ([event type] == NSEventTypeKeyDown){
             unsigned short key = [event keyCode];
-            heldKeys.insert(key);
+            auto result = heldKeys.insert(key);
 
             if (key == 51){
                 backspacePressed = true;
             }
-            else{
+            else if(result.second){
                 keyPressed = true;
             }
         }
