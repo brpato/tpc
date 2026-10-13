@@ -14,6 +14,8 @@ void startGlobalInput(){
          NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
          NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp) handler:^(NSEvent *event){
         if([event type] == NSEventTypeKeyDown){
+            NSLog(@"GLOBAL KEY DOWN: %hu", [event keyCode]);
+
             unsigned short key = [event keyCode];
             auto result = heldKeys.insert(key);
 
@@ -123,4 +125,7 @@ void requestInputPermissions() {
     );
 
     CGRequestListenEventAccess();
+
+    NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
+    NSLog(@"Accessibility: %d", AXIsProcessTrusted());
 }
