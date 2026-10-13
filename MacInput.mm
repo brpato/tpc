@@ -1,6 +1,6 @@
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
-#include "MacInput.h"
+#include "GlobalInput.h"
 #include <unordered_set>
 
 static bool keyPressed = false;
@@ -14,7 +14,7 @@ void startGlobalInput(){
          NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
          NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp) handler:^(NSEvent *event){
         if([event type] == NSEventTypeKeyDown){
-            unsigned short key = [event keyCode];
+            unsigned short key = [event keyCode];saa
             auto result = heldKeys.insert(key);
 
             if(key == 51){
