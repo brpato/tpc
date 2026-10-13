@@ -14,7 +14,7 @@ void startGlobalInput(){
          NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
          NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp) handler:^(NSEvent *event){
         if([event type] == NSEventTypeKeyDown){
-            unsigned short key = [event keyCode];saa
+            unsigned short key = [event keyCode];
             auto result = heldKeys.insert(key);
 
             if(key == 51){
