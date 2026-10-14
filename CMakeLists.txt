@@ -28,6 +28,12 @@ else()
             GlobalInput.h
             WinInput.cpp
     )
+
+    target_link_options(tpc PRIVATE
+            -static-libgcc
+            -static-libstdc++
+    )
+
     add_custom_command(TARGET tpc POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_SOURCE_DIR}/assets"
