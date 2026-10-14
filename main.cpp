@@ -21,6 +21,7 @@ bool typingFrame = false;
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
+bool isWindowTopmost(void* windowHandle);
 #endif
 
 void input(){
@@ -101,6 +102,7 @@ void run(){
     requestInputPermissions();
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
     InitWindow(165, 165, "hi");
+
     SetTargetFPS(60);
     std::string assets = std::string(resourcePath()) + "/assets/";
     mouse = LoadTexture((assets + "1.png").c_str());

@@ -4,6 +4,8 @@ made for my gf's horrible macbook
 
 art by https://x.com/slugtipede
 
+5 pngs that change depending on mouse and keyboard input (+ backspace)
+
 ## MacOs (doesnt work yet): 
 move tpc.app into Applications
 
@@ -14,3 +16,6 @@ just run the exe
 
 ### bugs:
 black box on some systems???
+
+### plans:
+easier png customization
