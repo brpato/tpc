@@ -19,6 +19,10 @@ Texture2D key2;
 Texture2D currentFrame;
 bool typingFrame = false;
 
+#ifdef _WIN32
+void keepWindowTopmost(void* windowHandle);
+#endif
+
 void input(){
     if(globalBackspacePressed()){
         lastInputTime = GetTime();
@@ -109,6 +113,9 @@ void run(){
     while(!WindowShouldClose()){
         input();
         move();
+#ifdef _WIN32
+        keepWindowTopmost(GetWindowHandle());
+#endif
         draw();
     }
     UnloadTexture(mouse);

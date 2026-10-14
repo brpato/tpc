@@ -27,6 +27,7 @@ else()
             main.cpp
             GlobalInput.h
             WinInput.cpp
+            WinWindow.cpp
     )
 
     target_link_options(tpc PRIVATE

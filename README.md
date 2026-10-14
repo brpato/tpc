@@ -13,5 +13,4 @@ paste `xattr -dr com.apple.quarantine /Applications/tpc.app` in terminal give tp
 just run the exe
 
 ### bugs:
-taskbar priority
 black box on some systems???
