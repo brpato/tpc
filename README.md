@@ -19,3 +19,9 @@ black box on some systems???
 
 ### plans:
 easier png customization
+
+### odd behaviors but not bugs:
+doesnt work with exclusive fullscreen
+doesnt work with anti-cheats that prevent global input reading
+can sit under the taskbar if certain actions happen in a certain order (windows)
+always sits under the task bar (in macos)
