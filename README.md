@@ -26,6 +26,7 @@ black box on some systems???
 ### plans:
 easier png customization
 - remove the strict 11:10px png requirement
+
 change name of pngs to match behavior
 divide left and right by left and right of qwerty
 add !, ?, -(?)
