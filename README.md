@@ -1,6 +1,6 @@
 # tpc
 
-**art by https://x.com/slugtipede**  
+**!! art by https://x.com/slugtipede !!**  
 5 pngs that change depending on mouse and keyboard input (+ backspace), customizable if you have 11:10px pngs  
 made for my gf's horrible macbook  
 
