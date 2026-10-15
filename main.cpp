@@ -5,19 +5,19 @@
 
 using namespace std;
 
-Color backgroundColor = WHITE;
-double lastInputTime = -1.0;
-bool backspace = false;
-bool click = false;
-bool dragging = false;
-Vector2 dragOffset;
-Texture2D idle;
-Texture2D back;
-Texture2D mouse;
-Texture2D key1;
-Texture2D key2;
-Texture2D currentFrame;
-bool typingFrame = false;
+static Color backgroundColor = WHITE;
+static double lastInputTime = -1.0;
+static bool backspace = false;
+static bool click = false;
+static bool dragging = false;
+static Vector2 dragOffset;
+static Texture2D idle;
+static Texture2D backk;
+static Texture2D mouseb;
+static Texture2D leftk;
+static Texture2D rightk;
+static Texture2D currentFrame;
+static bool typingFrame = false;
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
@@ -53,17 +53,17 @@ void input(){
 
     if(GetTime() - lastInputTime < 0.1){
         if(backspace){
-            currentFrame = back;
+            currentFrame = backk;
         }
         else if(click){
-            currentFrame = mouse;
+            currentFrame = mouseb;
         }
         else{
             if(typingFrame){
-                currentFrame = key1;
+                currentFrame = leftk;
             }
             else{
-                currentFrame = key2;
+                currentFrame = rightk;
             }
         }
     }
@@ -104,12 +104,12 @@ void run(){
     InitWindow(165, 165, "hi");
 
     SetTargetFPS(60);
-    std::string assets = std::string(resourcePath()) + "/assets/";
-    mouse = LoadTexture((assets + "1.png").c_str());
-    back = LoadTexture((assets + "4.png").c_str());
-    idle = LoadTexture((assets + "basic.png").c_str());
-    key1 = LoadTexture((assets + "left.png").c_str());
-    key2 = LoadTexture((assets + "right.png").c_str());
+    const std::string assets = std::string(resourcePath()) + "/assets/";
+    mouseb = LoadTexture((assets + "mouseb.png").c_str());
+    backk = LoadTexture((assets + "backk.png").c_str());
+    idle = LoadTexture((assets + "idle.png").c_str());
+    leftk = LoadTexture((assets + "left.png").c_str());
+    rightk = LoadTexture((assets + "right.png").c_str());
 
     startGlobalInput();
     while(!WindowShouldClose()){
@@ -120,11 +120,11 @@ void run(){
 #endif
         draw();
     }
-    UnloadTexture(mouse);
-    UnloadTexture(back);
+    UnloadTexture(mouseb);
+    UnloadTexture(backk);
     UnloadTexture(idle);
-    UnloadTexture(key1);
-    UnloadTexture(key2);
+    UnloadTexture(leftk);
+    UnloadTexture(rightk);
     CloseWindow();
 }
 

@@ -23,7 +23,7 @@ else()
 
     FetchContent_MakeAvailable(raylib)
 
-    add_executable(tpc
+    add_executable(tpc WIN32
             main.cpp
             GlobalInput.h
             WinInput.cpp
