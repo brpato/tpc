@@ -1,28 +1,28 @@
 # tpc
 
 **!! art by https://x.com/slugtipede !!**  
-5 pngs that change depending on mouse and keyboard input (+ backspace), customizable if you have 11:10px pngs  
+5 pngs that change depending on mouse and keyboard input (+ backspace), customizable if PNGs have 11:10 aspect ratio  
 made for my gf's horrible macbook  
 
-## MacOs (doesnt work yet): 
+## macOs (setup required): 
 move tpc.app into Applications
 
 paste `xattr -dr com.apple.quarantine /Applications/tpc.app` in terminal give tpc accessibility perms
 
 ## Windows:
-just run the exe
+run tpc.exe
 
 ### odd behaviors but not bugs:
-- doesnt work with exclusive fullscreen
-- doesnt work with anti-cheats that prevent global input reading
-- can sit under the taskbar if certain actions happen in a certain order (windows)
-- always sits under the task bar (in macos)
+- doesn't work with exclusive fullscreen
+- doesn't work with anti-cheats that prevent global input reading
+- can sit under the taskbar if certain actions happen in a certain order (Windows)
+- always sits under the task bar (in macOs)
 
 ### bugs:
-- black box on some systems???
+- black background of PNG on some Windows system (not sure why yet)
 
 ### plans:
-- make macos out of box ready
+- make macOs out of box ready
 - easier png customization (remove the strict 11:10px png requirement)
 - divide left and right by left and right of qwerty
 - add !, ?, -(?)
