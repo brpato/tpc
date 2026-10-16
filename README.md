@@ -20,6 +20,7 @@ run tpc.exe
 
 ### bugs:
 - black background of PNG on some Windows system (not sure why yet)
+- backspace bug
 
 ### plans:
 - make macOS out of box ready
