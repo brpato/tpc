@@ -7,7 +7,9 @@ made for my gf's horrible macbook
 ## macOS (setup required): 
 move tpc.app into Applications
 
-paste `xattr -dr com.apple.quarantine /Applications/tpc.app` in terminal give tpc accessibility perms
+paste `xattr -dr com.apple.quarantine /Applications/tpc.app` in terminal  
+
+give tpc accessibility perms
 
 ## Windows:
 run tpc.exe
