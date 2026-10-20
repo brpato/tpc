@@ -22,6 +22,8 @@ run tpc.exe
 
 ### bugs:
 - backspace bug
+  - hold backspace and click
+  - hold key and press backspace
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
 
 ### plans:
