@@ -21,7 +21,6 @@ run tpc.exe
 - always sits under the task bar (in macOS)
 
 ### bugs:
-- black background of PNG on some Windows system (not sure why yet)
 - backspace bug
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
 
