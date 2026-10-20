@@ -19,6 +19,7 @@ run tpc.exe
 - doesn't work with anti-cheats that prevent global input reading
 - can sit under the taskbar if certain actions happen in a certain order (Windows)
 - always sits under the task bar (in macOS)
+- macOS requires setup because it would require a DEVELOPER FEE? Im good
 
 ### bugs:
 - backspace bug
@@ -27,7 +28,6 @@ run tpc.exe
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
 
 ### plans:
-- make macOS out of box ready
 - easier png customization (remove the strict 11:10px png requirement)
 - divide left and right by left and right of qwerty
 - add !, ?, -(?)
