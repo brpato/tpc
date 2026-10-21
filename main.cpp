@@ -25,30 +25,36 @@ bool isWindowTopmost(void* windowHandle);
 #endif
 
 void input(){
+    bool active = false;
     if(globalBackspacePressed()){
-        lastInputTime = GetTime();
         backspace = true;
         click = false;
+        active = true;
     }
     else if(globalKeyPressed()){
-        lastInputTime = GetTime();
         backspace = false;
         click = false;
         typingFrame = !typingFrame;
+        active = true;
     }
     else if(globalMousePressed()){
-        lastInputTime = GetTime();
         backspace = false;
         click = true;
+        active = true;
     }
-    if(globalKeyDown()){
-        lastInputTime = GetTime();
+    if(globalKeyDown(Key::ANY)){
         click = false;
+        active = true;
+        backspace = globalKeyDown(Key::BACKSPACE);
     }
     if(globalMouseDown()){
-        lastInputTime = GetTime();
         click = true;
         backspace = false;
+        active = true;
+    }
+
+    if(active){
+        lastInputTime = GetTime();
     }
 
     if(GetTime() - lastInputTime < 0.1){

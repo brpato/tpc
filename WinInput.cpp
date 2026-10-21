@@ -50,15 +50,6 @@ double globalMouseY(){
     return mouse.y;
 }
 
-bool globalKeyDown(){
-    for(int key = 1; key <= 255; key++) {
-        if(key != VK_LBUTTON && key != VK_RBUTTON && key != VK_MBUTTON && (GetAsyncKeyState(key) & 0x8000)){
-            return true;
-        }
-    }
-    return false;
-}
-
 bool globalMouseDown(){
     return (GetAsyncKeyState(VK_LBUTTON) & 0x8000) || (GetAsyncKeyState(VK_RBUTTON) & 0x8000) || (GetAsyncKeyState(VK_MBUTTON) & 0x8000);
 }
@@ -78,4 +69,51 @@ const char* resourcePath(){
 }
 
 void requestInputPermissions(){
+}
+
+static int getKeyCode(const Key key){
+    switch(key){
+        case Key::BACKSPACE: return VK_BACK;
+        default: return -1;
+    }
+}
+
+//WORK ON THIS
+bool globalKeyPressed(const Key key){
+    if(key == Key::ANY){
+        bool newPress = false;
+        for(int vk = 1; vk <= 255; vk++){
+            if(vk == VK_BACK || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON){
+                continue;
+            }
+            bool down = GetAsyncKeyState(vk) & 0x8000;
+            if(down){
+                auto result = heldKeys.insert(vk);
+                if(result.second){
+                    newPress = true;
+                }
+            }
+            else{
+                heldKeys.erase(vk);
+            }
+        }
+        return newPress;
+    }
+    const int code = getKeyCode(key);
+    if(code == -1) return false;
+    return GetAsyncKeyState(code) & 0x0001;
+}
+
+bool globalKeyDown(const Key key){
+    if(key == Key::ANY){
+        for(int code = 1; code <= 255; code++){
+            if(code != VK_LBUTTON && code != VK_RBUTTON && code != VK_MBUTTON && (GetAsyncKeyState(code) & 0x8000)){
+                return true;
+            }
+        }
+        return false;
+    }
+    const int code = getKeyCode(key);
+    if(code == -1) return false;
+    return (GetAsyncKeyState(code) & 0x8000) != 0;
 }

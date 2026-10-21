@@ -102,10 +102,6 @@ double globalMouseY(){
     return screenHeight - mouse.y;
 }
 
-bool globalKeyDown(){
-    return !heldKeys.empty();
-}
-
 bool globalMouseDown(){
     return mouseDown;
 }
@@ -128,4 +124,21 @@ void requestInputPermissions() {
 
     NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
     NSLog(@"Accessibility: %d", AXIsProcessTrusted());
+}
+
+static int getKeyCode(const Key key){
+    switch(key){
+        case Key::BACKSPACE: return 51;
+        default: return -1;
+    }
+}
+
+bool globalKeyDown(const Key key){
+    if(key == Key::ANY){
+        return !heldKeys.empty();
+    }
+
+    const int code = getKeyCode(key);
+    if(code == -1) return false;
+    return heldKeys.contains(code);
 }

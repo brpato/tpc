@@ -22,9 +22,6 @@ run tpc.exe
 - macOS requires setup because it would require a DEVELOPER FEE? Im good
 
 ### bugs:
-- backspace bug
-  - hold backspace and click
-  - hold key and press backspace
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
 
 ### plans:
