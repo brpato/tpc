@@ -1,5 +1,6 @@
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <IOKit/hidsystem/IOLLEvent.h>
 #include "GlobalInput.h"
 #include <unordered_set>
 
@@ -12,63 +13,80 @@ void startGlobalInput(){
     [NSEvent addGlobalMonitorForEventsMatchingMask:
         (NSEventMaskKeyDown | NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown |
          NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
-         NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp) handler:^(NSEvent *event){
-        if([event type] == NSEventTypeKeyDown){
-            NSLog(@"GLOBAL KEY DOWN: %hu", [event keyCode]);
+         NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged) handler:^(NSEvent *event){
+        NSEventType type = [event type];
+        unsigned short key = 0;
+        if(type == NSEventTypeKeyDown || type == NSEventTypeKeyUp || type == NSEventTypeFlagsChanged){
+            key = [event keyCode];
+        }
 
-            unsigned short key = [event keyCode];
+        if(type == NSEventTypeKeyDown){
+            //NSLog(@"GLOBAL KEY DOWN: %hu", [event keyCode]);
+
             auto result = heldKeys.insert(key);
-
-            if(key == 51){
+            if(key == 51 && result.second){
                 backspacePressed = true;
             }
-            else if(result.second){
+            else if(key != 51 && result.second){
                 keyPressed = true;
             }
         }
-        else if([event type] == NSEventTypeKeyUp){
-            unsigned short key = [event keyCode];
+        else if(type == NSEventTypeKeyUp){
             heldKeys.erase(key);
         }
-        else if([event type] == NSEventTypeLeftMouseDown || [event type] == NSEventTypeRightMouseDown || [event type] == NSEventTypeOtherMouseDown){
+        else if(type == NSEventTypeLeftMouseDown || type == NSEventTypeRightMouseDown || type == NSEventTypeOtherMouseDown){
             mousePressed = true;
             mouseDown = true;
         }
-        else if([event type] == NSEventTypeLeftMouseUp || [event type] == NSEventTypeRightMouseUp || [event type] == NSEventTypeOtherMouseUp){
+        else if(type == NSEventTypeLeftMouseUp || type == NSEventTypeRightMouseUp || type == NSEventTypeOtherMouseUp){
             mouseDown = false;
+        }
+        else if(type == NSEventTypeFlagsChanged && (key == 56 || key == 60)){
+            auto flag = (key == 56) ? NX_DEVICELSHIFTKEYMASK : NX_DEVICERSHIFTKEYMASK;
+            if([event modifierFlags] & flag) heldKeys.insert(key);
+            else heldKeys.erase(key);
         }
     }];
 
     [NSEvent addLocalMonitorForEventsMatchingMask:
     (NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskLeftMouseDown |
      NSEventMaskLeftMouseUp | NSEventMaskRightMouseDown | NSEventMaskRightMouseUp |
-     NSEventMaskOtherMouseDown | NSEventMaskOtherMouseUp)
+     NSEventMaskOtherMouseDown | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged)
     handler:^NSEvent *(NSEvent *event){
-        if ([event type] == NSEventTypeKeyDown){
-            unsigned short key = [event keyCode];
+        NSEventType type = [event type];
+        unsigned short key = 0;
+        if(type == NSEventTypeKeyDown || type == NSEventTypeKeyUp || type == NSEventTypeFlagsChanged){
+            key = [event keyCode];
+        }
+        if(type == NSEventTypeKeyDown){
             auto result = heldKeys.insert(key);
 
-            if (key == 51){
+            if(key == 51 && result.second){
                 backspacePressed = true;
             }
-            else if(result.second){
+            else if(key != 51 && result.second){
                 keyPressed = true;
             }
         }
-        else if ([event type] == NSEventTypeKeyUp){
-            unsigned short key = [event keyCode];
+        else if(type == NSEventTypeKeyUp){
             heldKeys.erase(key);
         }
-        else if([event type] == NSEventTypeLeftMouseDown || [event type] == NSEventTypeRightMouseDown || [event type] == NSEventTypeOtherMouseDown){
+        else if(type == NSEventTypeLeftMouseDown || type == NSEventTypeRightMouseDown || type == NSEventTypeOtherMouseDown){
             mousePressed = true;
             mouseDown = true;
         }
-        else if([event type] == NSEventTypeLeftMouseUp || [event type] == NSEventTypeRightMouseUp || [event type] == NSEventTypeOtherMouseUp){
+        else if(type == NSEventTypeLeftMouseUp || type == NSEventTypeRightMouseUp || type == NSEventTypeOtherMouseUp){
             mouseDown = false;
+        }
+        else if(type == NSEventTypeFlagsChanged && (key == 56 || key == 60)){
+            auto flag = (key == 56) ? NX_DEVICELSHIFTKEYMASK : NX_DEVICERSHIFTKEYMASK;
+            if([event modifierFlags] & flag) heldKeys.insert(key);
+            else heldKeys.erase(key);
         }
         return event;
     }];
 }
+
 bool globalKeyPressed(){
     if(keyPressed){
         keyPressed = false;
@@ -76,6 +94,7 @@ bool globalKeyPressed(){
     }
     return false;
 }
+
 bool globalBackspacePressed(){
     if(backspacePressed){
         backspacePressed = false;
@@ -83,6 +102,7 @@ bool globalBackspacePressed(){
     }
     return false;
 }
+
 bool globalMousePressed(){
     if(mousePressed){
         mousePressed = false;
@@ -121,21 +141,39 @@ void requestInputPermissions() {
     );
 
     CGRequestListenEventAccess();
-
-    NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
-    NSLog(@"Accessibility: %d", AXIsProcessTrusted());
+    //NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
+    //NSLog(@"Accessibility: %d", AXIsProcessTrusted());
 }
 
 static int getKeyCode(const Key key){
     switch(key){
+        case Key::ONE: return 18;
+        case Key::HYPHEN: return 27;
+        case Key::ENTER: return 36;
         case Key::BACKSPACE: return 51;
+        case Key::SLASH: return 44;
         default: return -1;
     }
+}
+
+bool globalKeyPressed(Key key){
+    if(key == Key::ANY && keyPressed){
+        keyPressed = false;
+        return true;
+    }
+    else if(key == Key::BACKSPACE && backspacePressed){
+        backspacePressed = false;
+        return true;
+    }
+    return false;
 }
 
 bool globalKeyDown(const Key key){
     if(key == Key::ANY){
         return !heldKeys.empty();
+    }
+    if(key == Key::SHIFT){
+        return heldKeys.contains(56) || heldKeys.contains(60);
     }
 
     const int code = getKeyCode(key);

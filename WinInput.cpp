@@ -73,17 +73,20 @@ void requestInputPermissions(){
 
 static int getKeyCode(const Key key){
     switch(key){
+        case Key::ONE: return '1';
+        case Key::HYPHEN: return VK_OEM_MINUS;
+        case Key::ENTER: return VK_RETURN;
         case Key::BACKSPACE: return VK_BACK;
+        case Key::SLASH: return VK_OEM_2;
         default: return -1;
     }
 }
 
-//WORK ON THIS
 bool globalKeyPressed(const Key key){
     if(key == Key::ANY){
         bool newPress = false;
         for(int vk = 1; vk <= 255; vk++){
-            if(vk == VK_BACK || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON){
+            if(vk == VK_BACK || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON || vk == VK_RETURN){
                 continue;
             }
             bool down = GetAsyncKeyState(vk) & 0x8000;
@@ -101,8 +104,12 @@ bool globalKeyPressed(const Key key){
     }
     const int code = getKeyCode(key);
     if(code == -1) return false;
-    return GetAsyncKeyState(code) & 0x0001;
+    bool down = GetAsyncKeyState(code) & 0x8000;
+    if(down) return heldKeys.insert(code).second;
+    heldKeys.erase(code);
+    return false;
 }
+
 
 bool globalKeyDown(const Key key){
     if(key == Key::ANY){
@@ -113,6 +120,8 @@ bool globalKeyDown(const Key key){
         }
         return false;
     }
+    if(key == Key::SHIFT) return (GetAsyncKeyState(VK_LSHIFT) & 0x8000) || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
+
     const int code = getKeyCode(key);
     if(code == -1) return false;
     return (GetAsyncKeyState(code) & 0x8000) != 0;

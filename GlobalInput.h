@@ -12,7 +12,7 @@ const char* resourcePath();
 void requestInputPermissions();
 
 enum class Key{
-    BACKSPACE, ANY
+    ANY, SHIFT, ONE, HYPHEN, ENTER, BACKSPACE, SLASH
 };
 
 bool globalKeyPressed(Key key);

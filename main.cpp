@@ -26,12 +26,12 @@ bool isWindowTopmost(void* windowHandle);
 
 void input(){
     bool active = false;
-    if(globalBackspacePressed()){
+    if(globalKeyPressed(Key::BACKSPACE)){
         backspace = true;
         click = false;
         active = true;
     }
-    else if(globalKeyPressed()){
+    else if(globalKeyPressed(Key::ANY)){
         backspace = false;
         click = false;
         typingFrame = !typingFrame;
