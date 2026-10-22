@@ -10,12 +10,16 @@ static double lastInputTime = -1.0;
 static bool backspace = false;
 static bool click = false;
 static bool dragging = false;
+static bool enter = false;
+static bool hyphen = false;
 static Vector2 dragOffset;
 static Texture2D idle;
 static Texture2D backk;
 static Texture2D mouseb;
 static Texture2D leftk;
 static Texture2D rightk;
+static Texture2D entk;
+static Texture2D hyphk;
 static Texture2D currentFrame;
 static bool typingFrame = false;
 
@@ -29,27 +33,39 @@ void input(){
     if(globalKeyPressed(Key::BACKSPACE)){
         backspace = true;
         click = false;
+        enter = false;
+        active = true;
+    }
+    else if(globalKeyPressed(Key::ENTER)){
+        std::cout << "ENTER\n";
+        backspace = false;
+        click = false;
+        enter = true;
         active = true;
     }
     else if(globalKeyPressed(Key::ANY)){
         backspace = false;
         click = false;
         typingFrame = !typingFrame;
+        enter = false;
         active = true;
     }
     else if(globalMousePressed()){
         backspace = false;
         click = true;
+        enter = false;
         active = true;
     }
     if(globalKeyDown(Key::ANY)){
         click = false;
         active = true;
+        enter = globalKeyDown(Key::ENTER);
         backspace = globalKeyDown(Key::BACKSPACE);
     }
     if(globalMouseDown()){
         click = true;
         backspace = false;
+        enter = false;
         active = true;
     }
 
@@ -63,6 +79,9 @@ void input(){
         }
         else if(click){
             currentFrame = mouseb;
+        }
+        else if(enter){
+            currentFrame = entk;
         }
         else{
             if(typingFrame){
@@ -116,6 +135,9 @@ void run(){
     idle = LoadTexture((assets + "idle.png").c_str());
     leftk = LoadTexture((assets + "left.png").c_str());
     rightk = LoadTexture((assets + "right.png").c_str());
+    entk = LoadTexture((assets + "ent.png").c_str());
+    std::cout << entk.width << " x " << entk.height << endl;
+    //hyphk = LoadTexture((assets + "hyphen.png").c_str());
 
     startGlobalInput();
     while(!WindowShouldClose()){
@@ -131,6 +153,8 @@ void run(){
     UnloadTexture(idle);
     UnloadTexture(leftk);
     UnloadTexture(rightk);
+    UnloadTexture(entk);
+    //UnloadTexture(hyphk);
     CloseWindow();
 }
 

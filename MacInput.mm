@@ -8,6 +8,7 @@ static bool keyPressed = false;
 static bool backspacePressed = false;
 static bool mousePressed = false;
 static std::unordered_set<unsigned short> heldKeys;
+static std::unordered_set<unsigned short> pressedKeys;
 static bool mouseDown = false;
 void startGlobalInput(){
     [NSEvent addGlobalMonitorForEventsMatchingMask:
@@ -24,10 +25,11 @@ void startGlobalInput(){
             //NSLog(@"GLOBAL KEY DOWN: %hu", [event keyCode]);
 
             auto result = heldKeys.insert(key);
+            if(result.second) pressedKeys.insert(key);
             if(key == 51 && result.second){
                 backspacePressed = true;
             }
-            else if(key != 51 && result.second){
+            else if(key != 51 && key != 36 && key != 27 && result.second){
                 keyPressed = true;
             }
         }
@@ -60,11 +62,11 @@ void startGlobalInput(){
         }
         if(type == NSEventTypeKeyDown){
             auto result = heldKeys.insert(key);
-
+            if(result.second) pressedKeys.insert(key);
             if(key == 51 && result.second){
                 backspacePressed = true;
             }
-            else if(key != 51 && result.second){
+            else if(key != 51 && key != 36 && key != 27 && result.second){
                 keyPressed = true;
             }
         }
@@ -161,11 +163,9 @@ bool globalKeyPressed(Key key){
         keyPressed = false;
         return true;
     }
-    else if(key == Key::BACKSPACE && backspacePressed){
-        backspacePressed = false;
-        return true;
-    }
-    return false;
+    const int code = getKeyCode(key);
+    if(code == -1) return false;
+    return pressedKeys.erase(code) > 0;
 }
 
 bool globalKeyDown(const Key key){
