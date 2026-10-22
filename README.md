@@ -27,4 +27,4 @@ run tpc.exe
 ### plans:
 - easier png customization (remove the strict 11:10px png requirement)
 - divide left and right by left and right of qwerty
-- add !, ?, -(?)
+- add !, ?, -
