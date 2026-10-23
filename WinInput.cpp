@@ -4,6 +4,17 @@
 #include <string>
 
 static std::unordered_set<unsigned short> heldKeys;
+static const unordered_set<int> leftKeys = {
+    'Q', 'W', 'E', 'R', 'T',
+    'A', 'S', 'D', 'F', 'G',
+    'Z', 'X', 'C', 'V', 'B'
+};
+static const unordered_set<int> rightKeys = {
+    'Y', 'U', 'I', 'O', 'P',
+    'H', 'J', 'K', 'L',
+    'N', 'M'
+};
+
 
 void startGlobalInput(){
 }
@@ -110,7 +121,6 @@ bool globalKeyPressed(const Key key){
     return false;
 }
 
-
 bool globalKeyDown(const Key key){
     if(key == Key::ANY){
         for(int code = 1; code <= 255; code++){
@@ -125,4 +135,10 @@ bool globalKeyDown(const Key key){
     const int code = getKeyCode(key);
     if(code == -1) return false;
     return (GetAsyncKeyState(code) & 0x8000) != 0;
+}
+
+static KeySide getKeySide(int KeyCode){
+    if(leftKeys.contains(keyCode)) return KeySide::LEFT;
+    if(rightKeys.contains(keyCode)) return KeySide::RIGHT;
+    return KeySide::NONE;
 }
