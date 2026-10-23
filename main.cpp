@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "GlobalInput.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -13,22 +14,33 @@ static bool dragging = false;
 static bool enter = false;
 static bool hyphen = false;
 static Vector2 dragOffset;
-static Texture2D idle;
-static Texture2D backk;
-static Texture2D mouseb;
-static Texture2D leftk;
-static Texture2D rightk;
-static Texture2D entk;
-static Texture2D hyphk;
+//static Texture2D idle;
+//static Texture2D backk;
+//static Texture2D mouseb;
+//static Texture2D leftk;
+//static Texture2D rightk;
+//static Texture2D entk;
+//static Texture2D hyphk;
+static vector<Texture2D> imgs;
 static Texture2D currentFrame;
 static bool typingFrame = false;
+
+enum class InputState{
+    TYPING, BACKSPACE, MOUSE, ENTER, HYPHEN
+};
+
+static InputState state = InputState::TYPING;
+
+enum Frame{
+    IDLE, BACKSPACE, MOUSE, LEFT, RIGHT, ENTER, HYPHEN
+};
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
 bool isWindowTopmost(void* windowHandle);
 #endif
 
-void input(){
+static void input(){
     bool active = false;
     if(globalKeyPressed(Key::BACKSPACE)){
         backspace = true;
@@ -75,29 +87,29 @@ void input(){
 
     if(GetTime() - lastInputTime < 0.1){
         if(backspace){
-            currentFrame = backk;
+            currentFrame = imgs[BACKSPACE];
         }
         else if(click){
-            currentFrame = mouseb;
+            currentFrame = imgs[MOUSE];
         }
         else if(enter){
-            currentFrame = entk;
+            currentFrame = imgs[ENTER];
         }
         else{
             if(typingFrame){
-                currentFrame = leftk;
+                currentFrame = imgs[LEFT];
             }
             else{
-                currentFrame = rightk;
+                currentFrame = imgs[RIGHT];
             }
         }
     }
     else{
-        currentFrame = idle;
+        currentFrame = imgs[IDLE];
     }
 }
 
-void move(){
+static void move(){
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
         dragging = true;
         Vector2 window = GetWindowPosition();
@@ -114,7 +126,7 @@ void move(){
     }
 }
 
-void draw(){
+static void draw(){
     float x = (GetScreenWidth() - 165) / 2.0f;
     float y = (GetScreenHeight() - 150) / 2.0f;
     BeginDrawing();
@@ -123,21 +135,16 @@ void draw(){
     EndDrawing();
 }
 
-void run(){
+static void run(){
     requestInputPermissions();
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
     InitWindow(165, 165, "hi");
-
     SetTargetFPS(60);
     const std::string assets = std::string(resourcePath()) + "/assets/";
-    mouseb = LoadTexture((assets + "mouseb.png").c_str());
-    backk = LoadTexture((assets + "backk.png").c_str());
-    idle = LoadTexture((assets + "idle.png").c_str());
-    leftk = LoadTexture((assets + "left.png").c_str());
-    rightk = LoadTexture((assets + "right.png").c_str());
-    entk = LoadTexture((assets + "ent.png").c_str());
-    std::cout << entk.width << " x " << entk.height << endl;
-    //hyphk = LoadTexture((assets + "hyphen.png").c_str());
+
+    //needs to be in order of Frame enum
+    vector<string> filenames = {"idle.png", "backk.png", "mouseb.png", "left.png", "right.png", "ent.png"};
+    for(const string& s : filenames) imgs.push_back(LoadTexture((assets + s).c_str()));
 
     startGlobalInput();
     while(!WindowShouldClose()){
@@ -148,13 +155,7 @@ void run(){
 #endif
         draw();
     }
-    UnloadTexture(mouseb);
-    UnloadTexture(backk);
-    UnloadTexture(idle);
-    UnloadTexture(leftk);
-    UnloadTexture(rightk);
-    UnloadTexture(entk);
-    //UnloadTexture(hyphk);
+    for(const Texture2D& t : imgs) UnloadTexture(t);
     CloseWindow();
 }
 
