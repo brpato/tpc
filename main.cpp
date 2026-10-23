@@ -6,24 +6,12 @@
 
 using namespace std;
 
-static Color backgroundColor = WHITE;
 static double lastInputTime = -1.0;
-static bool backspace = false;
-static bool click = false;
-static bool dragging = false;
-static bool enter = false;
-static bool hyphen = false;
 static Vector2 dragOffset;
-//static Texture2D idle;
-//static Texture2D backk;
-//static Texture2D mouseb;
-//static Texture2D leftk;
-//static Texture2D rightk;
-//static Texture2D entk;
-//static Texture2D hyphk;
 static vector<Texture2D> imgs;
 static Texture2D currentFrame;
 static bool typingFrame = false;
+static bool dragging = false;
 
 enum class InputState{
     TYPING, BACKSPACE, MOUSE, ENTER, HYPHEN
@@ -37,76 +25,50 @@ enum Frame{
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
-bool isWindowTopmost(void* windowHandle);
 #endif
 
 static void input(){
     bool active = false;
     if(globalKeyPressed(Key::BACKSPACE)){
-        backspace = true;
-        click = false;
-        enter = false;
+        state = InputState::BACKSPACE;
         active = true;
     }
     else if(globalKeyPressed(Key::ENTER)){
-        std::cout << "ENTER\n";
-        backspace = false;
-        click = false;
-        enter = true;
+        state = InputState::ENTER;
         active = true;
     }
     else if(globalKeyPressed(Key::ANY)){
-        backspace = false;
-        click = false;
+        state = InputState::TYPING;
         typingFrame = !typingFrame;
-        enter = false;
         active = true;
     }
     else if(globalMousePressed()){
-        backspace = false;
-        click = true;
-        enter = false;
-        active = true;
-    }
-    if(globalKeyDown(Key::ANY)){
-        click = false;
-        active = true;
-        enter = globalKeyDown(Key::ENTER);
-        backspace = globalKeyDown(Key::BACKSPACE);
-    }
-    if(globalMouseDown()){
-        click = true;
-        backspace = false;
-        enter = false;
+        state = InputState::MOUSE;
         active = true;
     }
 
-    if(active){
-        lastInputTime = GetTime();
+    if(globalKeyDown(Key::ANY)){
+        active = true;
+        if(globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
+        else if(globalKeyDown(Key::ENTER)) state = InputState::ENTER;
+        //else if(globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
+        else state = InputState::TYPING;
     }
+
+    if(globalMouseDown()){
+        state = InputState::MOUSE;
+        active = true;
+    }
+
+    if(active) lastInputTime = GetTime();
 
     if(GetTime() - lastInputTime < 0.1){
-        if(backspace){
-            currentFrame = imgs[BACKSPACE];
-        }
-        else if(click){
-            currentFrame = imgs[MOUSE];
-        }
-        else if(enter){
-            currentFrame = imgs[ENTER];
-        }
-        else{
-            if(typingFrame){
-                currentFrame = imgs[LEFT];
-            }
-            else{
-                currentFrame = imgs[RIGHT];
-            }
-        }
+        if(state == InputState::BACKSPACE) currentFrame = imgs[BACKSPACE];
+        else if(state == InputState::ENTER) currentFrame = imgs[ENTER];
+        else if(state == InputState::MOUSE) currentFrame = imgs[MOUSE];
+        else if(state == InputState::TYPING) currentFrame = imgs[typingFrame ? LEFT : RIGHT];
     }
-    else{
-        currentFrame = imgs[IDLE];
-    }
+    else currentFrame = imgs[IDLE];
 }
 
 static void move(){
@@ -117,13 +79,9 @@ static void move(){
         dragOffset.y = globalMouseY() - window.y;
     }
 
-    if(dragging){
-        SetWindowPosition(globalMouseX() - dragOffset.x, globalMouseY() - dragOffset.y);
-    }
+    if(dragging) SetWindowPosition(globalMouseX() - dragOffset.x, globalMouseY() - dragOffset.y);
 
-    if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON)){
-        dragging = false;
-    }
+    if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) dragging = false;
 }
 
 static void draw(){
