@@ -86,7 +86,7 @@ bool globalKeyPressed(const Key key){
     if(key == Key::ANY){
         bool newPress = false;
         for(int vk = 1; vk <= 255; vk++){
-            if(vk == VK_BACK || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON || vk == VK_RETURN){
+            if(vk == VK_BACK || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON || vk == VK_RETURN || vk == VK_OEM_MIUNS){
                 continue;
             }
             bool down = GetAsyncKeyState(vk) & 0x8000;
