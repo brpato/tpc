@@ -14,13 +14,13 @@ static bool typingFrame = false;
 static bool dragging = false;
 
 enum class InputState{
-    TYPING, BACKSPACE, MOUSE, ENTER, HYPHEN
+    TYPING, BACKSPACE, MOUSE, ENTER, HYPHEN, EXCLAMATION, QUESTION
 };
 
 static InputState state = InputState::TYPING;
 
 enum Frame{
-    IDLE, BACKSPACE, MOUSE, LEFT, RIGHT, ENTER, HYPHEN
+    IDLE, BACKSPACE, MOUSE, LEFT, RIGHT, ENTER, HYPHEN, EXCLAMATION, QUESTION
 };
 
 #ifdef _WIN32
@@ -53,7 +53,9 @@ static void input(){
 
     if(globalKeyDown(Key::ANY)){
         active = true;
-        if(globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
+        if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::ONE)) state = InputState::EXCLAMATION;
+        else if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::SLASH)) state = InputState::QUESTION;
+        else if(globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
         else if(globalKeyDown(Key::ENTER)) state = InputState::ENTER;
         else if(globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
         else state = InputState::TYPING;
@@ -67,7 +69,9 @@ static void input(){
     if(active) lastInputTime = GetTime();
 
     if(GetTime() - lastInputTime < 0.1){
-        if(state == InputState::BACKSPACE) currentFrame = imgs[BACKSPACE];
+        if(state == InputState::EXCLAMATION) currentFrame = imgs[EXCLAMATION];
+        else if(state == InputState::QUESTION) currentFrame = imgs[QUESTION];
+        else if(state == InputState::BACKSPACE) currentFrame = imgs[BACKSPACE];
         else if(state == InputState::ENTER) currentFrame = imgs[ENTER];
         else if(state == InputState::HYPHEN) currentFrame = imgs[HYPHEN];
         else if(state == InputState::MOUSE) currentFrame = imgs[MOUSE];
@@ -106,7 +110,7 @@ static void run(){
     const std::string assets = std::string(resourcePath()) + "/assets/";
 
     //needs to be in order of Frame enum
-    vector<string> filenames = {"idle.png", "backk.png", "mouseb.png", "left.png", "right.png", "ent.png", "hyphk.png"};
+    vector<string> filenames = {"idle.png", "backk.png", "mouseb.png", "left.png", "right.png", "ent.png", "hyphk.png", "excl.png", "ques.png"};
     for(const string& s : filenames) imgs.push_back(LoadTexture((assets + s).c_str()));
 
     startGlobalInput();
