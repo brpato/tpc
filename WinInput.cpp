@@ -58,31 +58,6 @@ static KeySide lastKeySide = KeySide::NONE;
 void startGlobalInput(){
 }
 
-bool globalKeyPressed(){
-    bool newPress = false;
-    for(int key = 1; key <= 255; key++){
-        if(key == VK_BACK || key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON){
-            continue;
-        }
-        bool down = GetAsyncKeyState(key) & 0x8000;
-
-        if(down){
-            auto result = heldKeys.insert(key);
-
-            if(result.second){
-                newPress = true;
-            }
-        } else{
-            heldKeys.erase(key);
-        }
-    }
-    return newPress;
-}
-
-bool globalBackspacePressed(){
-    return GetAsyncKeyState(VK_BACK) & 0x0001;
-}
-
 bool globalMousePressed(){
     return (GetAsyncKeyState(VK_LBUTTON) & 0x0001) || (GetAsyncKeyState(VK_RBUTTON) & 0x0001) || (
                GetAsyncKeyState(VK_MBUTTON) & 0x0001);

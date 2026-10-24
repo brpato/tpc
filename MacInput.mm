@@ -5,7 +5,6 @@
 #include <unordered_set>
 
 static bool keyPressed = false;
-static bool backspacePressed = false;
 static bool mousePressed = false;
 static std::unordered_set<unsigned short> heldKeys;
 static std::unordered_set<unsigned short> pressedKeys;
@@ -68,6 +67,12 @@ static const std::unordered_set<int> rightKeys = {
 };
 static KeySide lastKeySide = KeySide::NONE;
 
+static KeySide getKeySide(int keyCode){
+    if(leftKeys.contains(keyCode)) return KeySide::LEFT;
+    if(rightKeys.contains(keyCode)) return KeySide::RIGHT;
+    return KeySide::NONE;
+}
+
 void startGlobalInput(){
     [NSEvent addGlobalMonitorForEventsMatchingMask:(
         NSEventMaskKeyDown | NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown |
@@ -89,10 +94,7 @@ void startGlobalInput(){
                 if(side != KeySide::NONE) lastKeySide = side;
             }
 
-            if(key == 51 && result.second){
-                backspacePressed = true;
-            }
-            else if(key != 51 && key != 36 && key != 27 && result.second){
+            if(key != 51 && key != 36 && key != 27 && result.second){
                 keyPressed = true;
             }
         }
@@ -129,10 +131,7 @@ void startGlobalInput(){
                 KeySide side = getKeySide(key);
                 if(side != KeySide::NONE) lastKeySide = side;
             }
-            if(key == 51 && result.second){
-                backspacePressed = true;
-            }
-            else if(key != 51 && key != 36 && key != 27 && result.second){
+            if(key != 51 && key != 36 && key != 27 && result.second){
                 keyPressed = true;
             }
         }
@@ -153,22 +152,6 @@ void startGlobalInput(){
         }
         return event;
     }];
-}
-
-bool globalKeyPressed(){
-    if(keyPressed){
-        keyPressed = false;
-        return true;
-    }
-    return false;
-}
-
-bool globalBackspacePressed(){
-    if(backspacePressed){
-        backspacePressed = false;
-        return true;
-    }
-    return false;
 }
 
 bool globalMousePressed(){
@@ -211,12 +194,6 @@ void requestInputPermissions() {
     CGRequestListenEventAccess();
     //NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
     //NSLog(@"Accessibility: %d", AXIsProcessTrusted());
-}
-
-static KeySide getKeySide(int keyCode){
-    if(leftKeys.contains(keyCode)) return KeySide::LEFT;
-    if(rightKeys.contains(keyCode)) return KeySide::RIGHT;
-    return KeySide::NONE;
 }
 
 KeySide globalKeySidePressed(){
