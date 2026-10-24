@@ -132,14 +132,13 @@ KeySide globalKeySidePressed(){
     return lastKeySide;
 }
 
-KeySide globalKeySideDown(){
+bool globalKeySideDown(KeySide side){
     for(int vk = 1; vk <= 255; vk++){
         if(GetAsyncKeyState(vk) & 0x8000){
-            KeySide side = getKeySide(vk);
-            if(side != KeySide::NONE) return side;
+            if(getKeySide(vk) == side) return true;
         }
     }
-    return KeySide::NONE;
+    return false;
 }
 
 static int getKeyCode(const Key key){
@@ -196,4 +195,19 @@ bool globalKeyDown(const Key key){
     const int code = getKeyCode(key);
     if(code == -1) return false;
     return (GetAsyncKeyState(code) & 0x8000) != 0;
+}
+
+void launchRightPet(){
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(nullptr, path, MAX_PATH);
+    std::wstring command = L"\"" + std::wstring(path) + L"\" right";
+    STARTUPINFOW si{};
+    si.cb = sizeof(si);
+    PROCESS_INFORMATION pi{};
+    if(CreateProcessW(
+        path, command.data(), nullptr, nullptr,
+        FALSE, 0, nullptr, nullptr, &si, &pi)){
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+    }
 }

@@ -25,28 +25,30 @@ enum Frame{
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
+void launchRightPet();
 #endif
 
-static void input(){
+static void input(KeySide side){
     bool active = false;
-    if(globalKeyPressed(Key::BACKSPACE)){
+    if(side == KeySide::RIGHT && globalKeyPressed(Key::BACKSPACE)){
         state = InputState::BACKSPACE;
         active = true;
     }
-    else if(globalKeyPressed(Key::ENTER)){
+    else if(side == KeySide::RIGHT && globalKeyPressed(Key::ENTER)){
         state = InputState::ENTER;
         active = true;
     }
-    else if(globalKeyPressed(Key::HYPHEN)){
+    else if(side == KeySide::RIGHT && globalKeyPressed(Key::HYPHEN)){
         state = InputState::HYPHEN;
         active = true;
     }
     else if(globalKeyPressed(Key::ANY)){
-        state = InputState::TYPING;
-        KeySide side = globalKeySidePressed();
-        if(side == KeySide::LEFT) typingFrame = true;
-        else if(side == KeySide::RIGHT) typingFrame = false;
-        active = true;
+        KeySide kSide = globalKeySidePressed();
+        if(kSide == side){
+            typingFrame = (side == KeySide::LEFT);
+            state = InputState::TYPING;
+            active = true;
+        }
     }
     else if(globalMousePressed()){
         state = InputState::MOUSE;
@@ -54,17 +56,16 @@ static void input(){
     }
 
     if(globalKeyDown(Key::ANY)){
-        active = true;
+        bool matched = true;
         if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::ONE)) state = InputState::EXCLAMATION;
         else if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::SLASH)) state = InputState::QUESTION;
-        else if(globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
-        else if(globalKeyDown(Key::ENTER)) state = InputState::ENTER;
-        else if(globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
-        else state = InputState::TYPING;
-
-        KeySide side = globalKeySideDown();
-        if(side == KeySide::LEFT) typingFrame = true;
-        else if(side == KeySide::RIGHT) typingFrame = false;
+        else if(side == KeySide::RIGHT && globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
+        else if(side == KeySide::RIGHT && globalKeyDown(Key::ENTER)) state = InputState::ENTER;
+        else if(side == KeySide::RIGHT && globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
+        else if(globalKeySideDown(side)) state = InputState::TYPING;
+        else matched = false;
+        if(matched) active = true;
+        typingFrame = (side == KeySide::LEFT);
     }
 
     if(globalMouseDown()){
@@ -108,12 +109,14 @@ static void draw(){
     EndDrawing();
 }
 
-static void run(){
+static void run(KeySide side){
     requestInputPermissions();
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
     InitWindow(165, 165, "hi");
     SetTargetFPS(60);
-    const std::string assets = std::string(resourcePath()) + "/assets/";
+    if(side == KeySide::LEFT) SetWindowPosition(600, 300);
+    else SetWindowPosition(300, 300);
+    const std::string assets = std::string(resourcePath()) + "/assets/" + (side == KeySide::LEFT ? "left/" : "right/");
 
     //needs to be in order of Frame enum
     vector<string> filenames = {
@@ -124,7 +127,7 @@ static void run(){
 
     startGlobalInput();
     while(!WindowShouldClose()){
-        input();
+        input(side);
         move();
 #ifdef _WIN32
         keepWindowTopmost(GetWindowHandle());
@@ -135,6 +138,12 @@ static void run(){
     CloseWindow();
 }
 
-int main(){
-    run();
+int main(int argc, char* argv[]){
+    if(argc > 1 && string(argv[1]) == "right") run(KeySide::RIGHT);
+    else{
+#ifdef _WIN32
+        if(argc == 1) launchRightPet();
+#endif
+        run(KeySide::LEFT);
+    }
 }

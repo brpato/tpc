@@ -15,7 +15,7 @@ enum class KeySide{
     LEFT, RIGHT, NONE
 };
 KeySide globalKeySidePressed();
-KeySide globalKeySideDown();
+bool globalKeySideDown(KeySide side);
 
 enum class Key{
     ANY, SHIFT, ONE, HYPHEN, ENTER, BACKSPACE, SLASH

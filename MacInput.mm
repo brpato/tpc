@@ -223,12 +223,11 @@ KeySide globalKeySidePressed(){
     return lastKeySide;
 }
 
-KeySide globalKeySideDown(){
+bool globalKeySideDown(KeySide side){
     for(const auto& key : heldKeys){
-        KeySide side = getKeySide(key);
-        if(side != KeySide::NONE) return side;
+        if(getKeySide(key) == side) return true;
     }
-    return KeySide::NONE;
+    return false;
 }
 
 static int getKeyCode(const Key key){
