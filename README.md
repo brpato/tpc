@@ -25,5 +25,7 @@ run tpc.exe
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
 
 ### plans:
-- easier png customization (remove the strict 11:10px png requirement)
+- easier png customization
+- - remove 11:10 aspect ratio restriction
+- - minimize clickable space of a png as much as possible
 - bounce
