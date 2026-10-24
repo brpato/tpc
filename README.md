@@ -23,6 +23,7 @@ run tpc.exe
 
 ### bugs:
 - keyboard frame getting stuck? had to close and reopen? (ALLEGEDLY)
+- Full overlap, DO NOT DO IT
 
 ### plans:
 - easier png customization (remove the strict 11:10px png requirement)
