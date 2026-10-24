@@ -74,7 +74,7 @@ static void input(){
 
     if(active) lastInputTime = GetTime();
 
-    if(GetTime() - lastInputTime < 0.1){
+    if(GetTime() - lastInputTime < 0.016){
         if(state == InputState::EXCLAMATION) currentFrame = imgs[EXCLAMATION];
         else if(state == InputState::QUESTION) currentFrame = imgs[QUESTION];
         else if(state == InputState::BACKSPACE) currentFrame = imgs[BACKSPACE];
