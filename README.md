@@ -26,3 +26,4 @@ run tpc.exe
 
 ### plans:
 - easier png customization (remove the strict 11:10px png requirement)
+- bounce
