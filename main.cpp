@@ -43,7 +43,9 @@ static void input(){
     }
     else if(globalKeyPressed(Key::ANY)){
         state = InputState::TYPING;
-        typingFrame = !typingFrame;
+        KeySide side = globalKeySidePressed();
+        if(side == KeySide::LEFT) typingFrame = true;
+        else if(side == KeySide::RIGHT) typingFrame = false;
         active = true;
     }
     else if(globalMousePressed()){
@@ -59,6 +61,10 @@ static void input(){
         else if(globalKeyDown(Key::ENTER)) state = InputState::ENTER;
         else if(globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
         else state = InputState::TYPING;
+
+        KeySide side = globalKeySideDown();
+        if(side == KeySide::LEFT) typingFrame = true;
+        else if(side == KeySide::RIGHT) typingFrame = false;
     }
 
     if(globalMouseDown()){
@@ -110,7 +116,10 @@ static void run(){
     const std::string assets = std::string(resourcePath()) + "/assets/";
 
     //needs to be in order of Frame enum
-    vector<string> filenames = {"idle.png", "backk.png", "mouseb.png", "left.png", "right.png", "ent.png", "hyphk.png", "excl.png", "ques.png"};
+    vector<string> filenames = {
+        "idle.png", "backk.png", "mouseb.png", "left.png", "right.png",
+        "entk.png", "hyphk.png", "excl.png", "ques.png"
+    };
     for(const string& s : filenames) imgs.push_back(LoadTexture((assets + s).c_str()));
 
     startGlobalInput();

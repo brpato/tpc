@@ -11,12 +11,15 @@ bool globalMouseDown();
 const char* resourcePath();
 void requestInputPermissions();
 
-enum class Key{
-    ANY, SHIFT, ONE, HYPHEN, ENTER, BACKSPACE, SLASH
-};
-
 enum class KeySide{
     LEFT, RIGHT, NONE
 };
+KeySide globalKeySidePressed();
+KeySide globalKeySideDown();
+
+enum class Key{
+    ANY, SHIFT, ONE, HYPHEN, ENTER, BACKSPACE, SLASH
+};
 bool globalKeyPressed(Key key);
 bool globalKeyDown(Key key);
+

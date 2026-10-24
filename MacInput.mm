@@ -10,11 +10,69 @@ static bool mousePressed = false;
 static std::unordered_set<unsigned short> heldKeys;
 static std::unordered_set<unsigned short> pressedKeys;
 static bool mouseDown = false;
+
+static const std::unordered_set<int> leftKeys = {
+    12, 13, 14, 15, 17,        // Q W E R T
+    0, 1, 2, 3, 5,             // A S D F G
+    6, 7, 8, 9, 11,            // Z X C V B
+    18, 19, 20, 21, 23,        // 1 2 3 4 5
+    // Modifiers and controls
+    56,                        // Left Shift
+    59,                        // Left Control
+    58,                        // Left Option
+    55,                        // Left Command
+    48,                        // Tab
+    57,                        // Caps Lock
+    // Function keys
+    122, 120, 99, 118, 96, 97, // F1-F6
+    // Other
+    50,                        // ` ~
+    53,                        // Escape
+    49,                        // Space (assigned LEFT)
+};
+
+static const std::unordered_set<int> rightKeys = {
+    16, 32, 34, 31, 35,          // Y U I O P
+    4, 38, 40, 37,               // H J K L
+    45, 46,                      // N M
+    22, 26, 28, 25, 29,          // 6 7 8 9 0
+    // Modifiers and controls
+    60,                          // Right Shift
+    62,                          // Right Control
+    61,                          // Right Option
+    54,                          // Right Command
+    // Function keys
+    98, 100, 101, 109, 103, 111, // F7-F12
+    // Punctuation
+    33, 30,                      // [ ]
+    42,                          // Backslash
+    41,                          // ;
+    39,                          // '
+    24,                          // =
+    47,                          // .
+    43,                          // ,
+    44,                          // /
+    // Navigation
+    123, 124, 125, 126,          // Left Right Down Up arrows
+    115, 119,                    // Home End
+    116, 121,                    // Page Up Page Down
+    117,                         // Forward Delete
+    114,                         // Help / Insert-like key
+    // Numpad
+    82, 83, 84, 85, 86,          // 0-4
+    87, 88, 89, 91, 92,          // 5-9
+    65,                          // Decimal
+    67, 69, 75, 78,              // * + / -
+    71,                          // Clear / Num Lock equivalent
+    76                           // Numpad Enter
+};
+static KeySide lastKeySide = KeySide::NONE;
+
 void startGlobalInput(){
-    [NSEvent addGlobalMonitorForEventsMatchingMask:
-        (NSEventMaskKeyDown | NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown |
-         NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
-         NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged) handler:^(NSEvent *event){
+    [NSEvent addGlobalMonitorForEventsMatchingMask:(
+        NSEventMaskKeyDown | NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown |
+        NSEventMaskOtherMouseDown | NSEventMaskKeyUp | NSEventMaskLeftMouseUp |
+        NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged) handler:^(NSEvent *event){
         NSEventType type = [event type];
         unsigned short key = 0;
         if(type == NSEventTypeKeyDown || type == NSEventTypeKeyUp || type == NSEventTypeFlagsChanged){
@@ -25,7 +83,12 @@ void startGlobalInput(){
             //NSLog(@"GLOBAL KEY DOWN: %hu", [event keyCode]);
 
             auto result = heldKeys.insert(key);
-            if(result.second) pressedKeys.insert(key);
+            if(result.second){
+                pressedKeys.insert(key);
+                KeySide side = getKeySide(key);
+                if(side != KeySide::NONE) lastKeySide = side;
+            }
+
             if(key == 51 && result.second){
                 backspacePressed = true;
             }
@@ -50,11 +113,10 @@ void startGlobalInput(){
         }
     }];
 
-    [NSEvent addLocalMonitorForEventsMatchingMask:
-    (NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskLeftMouseDown |
-     NSEventMaskLeftMouseUp | NSEventMaskRightMouseDown | NSEventMaskRightMouseUp |
-     NSEventMaskOtherMouseDown | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged)
-    handler:^NSEvent *(NSEvent *event){
+    [NSEvent addLocalMonitorForEventsMatchingMask:(
+        NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskLeftMouseDown |
+        NSEventMaskLeftMouseUp | NSEventMaskRightMouseDown | NSEventMaskRightMouseUp |
+        NSEventMaskOtherMouseDown | NSEventMaskOtherMouseUp | NSEventMaskFlagsChanged) handler:^NSEvent *(NSEvent *event){
         NSEventType type = [event type];
         unsigned short key = 0;
         if(type == NSEventTypeKeyDown || type == NSEventTypeKeyUp || type == NSEventTypeFlagsChanged){
@@ -62,7 +124,11 @@ void startGlobalInput(){
         }
         if(type == NSEventTypeKeyDown){
             auto result = heldKeys.insert(key);
-            if(result.second) pressedKeys.insert(key);
+            if(result.second){
+                pressedKeys.insert(key);
+                KeySide side = getKeySide(key);
+                if(side != KeySide::NONE) lastKeySide = side;
+            }
             if(key == 51 && result.second){
                 backspacePressed = true;
             }
@@ -145,6 +211,24 @@ void requestInputPermissions() {
     CGRequestListenEventAccess();
     //NSLog(@"Input Monitoring: %d", CGPreflightListenEventAccess());
     //NSLog(@"Accessibility: %d", AXIsProcessTrusted());
+}
+
+static KeySide getKeySide(int keyCode){
+    if(leftKeys.contains(keyCode)) return KeySide::LEFT;
+    if(rightKeys.contains(keyCode)) return KeySide::RIGHT;
+    return KeySide::NONE;
+}
+
+KeySide globalKeySidePressed(){
+    return lastKeySide;
+}
+
+KeySide globalKeySideDown(){
+    for(const auto& key : heldKeys){
+        KeySide side = getKeySide(key);
+        if(side != KeySide::NONE) return side;
+    }
+    return KeySide::NONE;
 }
 
 static int getKeyCode(const Key key){

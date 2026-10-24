@@ -1,7 +1,7 @@
 # tpc
 
 **!! art by https://x.com/slugtipede !!**  
-5 pngs that change depending on mouse and keyboard input (+ backspace), customizable if PNGs have 11:10 aspect ratio  
+5 pngs that change depending on mouse and keyboard input (special frames: backspace, enter, -, !, ?), customizable if PNGs have 11:10 aspect ratio  
 made for my gf's horrible macbook  
 
 ## macOS (setup required): 
@@ -26,5 +26,3 @@ run tpc.exe
 
 ### plans:
 - easier png customization (remove the strict 11:10px png requirement)
-- divide left and right by left and right of qwerty
-- add !, ?, -
