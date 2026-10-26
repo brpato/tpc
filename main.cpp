@@ -10,82 +10,17 @@ static double lastInputTime = -1.0;
 static Vector2 dragOffset;
 static vector<Texture2D> imgs;
 static Texture2D currentFrame;
-static bool typingFrame = false;
 static bool dragging = false;
-
-enum class InputState{
-    TYPING, BACKSPACE, MOUSE, ENTER, HYPHEN, EXCLAMATION, QUESTION
-};
-
-static InputState state = InputState::TYPING;
-
-enum Frame{
-    IDLE, BACKSPACE, MOUSE, LEFT, RIGHT, ENTER, HYPHEN, EXCLAMATION, QUESTION
-};
+static size_t frameIndex = 0;
 
 #ifdef _WIN32
 void keepWindowTopmost(void* windowHandle);
 #endif
 
 static void input(){
-    bool active = false;
-    if(globalKeyPressed(Key::BACKSPACE)){
-        state = InputState::BACKSPACE;
-        active = true;
-    }
-    else if(globalKeyPressed(Key::ENTER)){
-        state = InputState::ENTER;
-        active = true;
-    }
-    else if(globalKeyPressed(Key::HYPHEN)){
-        state = InputState::HYPHEN;
-        active = true;
-    }
-    else if(globalKeyPressed(Key::ANY)){
-        state = InputState::TYPING;
-        KeySide side = globalKeySidePressed();
-        if(side == KeySide::LEFT) typingFrame = true;
-        else if(side == KeySide::RIGHT) typingFrame = false;
-        active = true;
-    }
-    else if(globalMousePressed()){
-        state = InputState::MOUSE;
-        active = true;
-    }
-
-    if(globalKeyDown(Key::ANY)){
-        active = true;
-        if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::ONE)) state = InputState::EXCLAMATION;
-        else if(globalKeyDown(Key::SHIFT) && globalKeyDown(Key::SLASH)) state = InputState::QUESTION;
-        else if(globalKeyDown(Key::BACKSPACE)) state = InputState::BACKSPACE;
-        else if(globalKeyDown(Key::ENTER)) state = InputState::ENTER;
-        else if(globalKeyDown(Key::HYPHEN)) state = InputState::HYPHEN;
-        else state = InputState::TYPING;
-
-        KeySide side = globalKeySideDown();
-        if(side == KeySide::LEFT) typingFrame = true;
-        else if(side == KeySide::RIGHT) typingFrame = false;
-    }
-
-    if(globalMouseDown()){
-        state = InputState::MOUSE;
-        active = true;
-    }
-
-    if(active) lastInputTime = GetTime();
-
-    if(GetTime() - lastInputTime < 0.1){
-        if(state == InputState::EXCLAMATION) currentFrame = imgs[EXCLAMATION];
-        else if(state == InputState::QUESTION) currentFrame = imgs[QUESTION];
-        else if(state == InputState::BACKSPACE) currentFrame = imgs[BACKSPACE];
-        else if(state == InputState::ENTER) currentFrame = imgs[ENTER];
-        else if(state == InputState::HYPHEN) currentFrame = imgs[HYPHEN];
-        else if(state == InputState::MOUSE) currentFrame = imgs[MOUSE];
-        else if(state == InputState::TYPING) currentFrame = imgs[typingFrame ? LEFT : RIGHT];
-    }
-    else currentFrame = imgs[IDLE];
+    if(globalKeyPressed(Key::ANY) || globalMousePressed()) frameIndex = (frameIndex + 1) % imgs.size();
+    currentFrame = imgs[frameIndex];
 }
-
 static void move(){
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
         dragging = true;
@@ -99,26 +34,27 @@ static void move(){
     if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) dragging = false;
 }
 
+//732x700
 static void draw(){
-    float x = (GetScreenWidth() - 165) / 2.0f;
+    float x = (GetScreenWidth() - 157) / 2.0f;
     float y = (GetScreenHeight() - 150) / 2.0f;
     BeginDrawing();
     ClearBackground(BLANK);
-    DrawTexturePro(currentFrame, {0, 0, (float)currentFrame.width, (float)currentFrame.height},{x, y, 165, 150}, {0, 0}, 0, WHITE);
+    DrawTexturePro(currentFrame, {0, 0, (float)currentFrame.width, (float)currentFrame.height},{x, y, 157, 150}, {0, 0}, 0, WHITE);
     EndDrawing();
 }
 
 static void run(){
     requestInputPermissions();
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TOPMOST);
-    InitWindow(165, 165, "hi");
+    InitWindow(157, 150, "hi");
     SetTargetFPS(60);
     const std::string assets = std::string(resourcePath()) + "/assets/";
 
     //needs to be in order of Frame enum
     vector<string> filenames = {
-        "idle.png", "backk.png", "mouseb.png", "left.png", "right.png",
-        "entk.png", "hyphk.png", "excl.png", "ques.png"
+        "cat-1.png", "cat-2.png", "cat-3.png", "cat-4.png", "cat-5.png",
+        "cat-6.png", "cat-7.png", "cat-8.png"
     };
     for(const string& s : filenames) imgs.push_back(LoadTexture((assets + s).c_str()));
 
